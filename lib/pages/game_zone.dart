@@ -1,5 +1,7 @@
-import 'package:audivive/pages/game_reaction.dart';
+import 'package:audivive/pages/game_noise_speech.dart';
 import 'package:flutter/material.dart';
+import 'package:audivive/pages/game_auditorymemory.dart';
+import 'package:audivive/pages/game_reaction.dart';
 
 class GameZonePage extends StatelessWidget {
   final List<Map<String, dynamic>> games = [
@@ -31,12 +33,12 @@ class GameZonePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Game Zone'),
+        title: const Text('Game Zone'),
         backgroundColor: Colors.blueAccent,
       ),
       body: GridView.builder(
-        padding: EdgeInsets.all(10),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3, // 3 columns
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
@@ -45,16 +47,42 @@ class GameZonePage extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              if (games[index]["name"] == "Reaction Time Game") {
-                // Navigate to the Reaction Time Game page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ReactionTimeGamePage(),
-                  ),
-                );
+              // Navigation logic based on the game name
+              switch (games[index]["name"]) {
+                case "Reaction Time Game":
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReactionTimeGamePage(),
+                    ),
+                  );
+                  break;
+                case "Auditory Memory Games":
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TextToSpeechPage(),
+                    ),
+                  );
+                  break;
+                case "Speech in Noise":
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MotivationalGame(),
+                    ),
+                  );
+                  break;
+                // Add cases for other games here
+                default:
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content:
+                          Text('${games[index]["name"]} is under development!'),
+                    ),
+                  );
+                  break;
               }
-              // Add other game navigation logic here
             },
             child: Container(
               decoration: BoxDecoration(
@@ -64,7 +92,7 @@ class GameZonePage extends StatelessWidget {
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 5,
-                    offset: Offset(2, 2),
+                    offset: const Offset(2, 2),
                   ),
                 ],
               ),
@@ -77,11 +105,11 @@ class GameZonePage extends StatelessWidget {
                       size: 40,
                       color: Colors.white,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       games[index]["name"],
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
