@@ -1,5 +1,7 @@
-import 'package:audivive/pages/game_noise_speech.dart';
+import 'package:audivive/pages/game_sound_identify.dart';
 import 'package:flutter/material.dart';
+import 'package:audivive/pages/game_rhythm.dart';
+import 'package:audivive/pages/game_noise_speech.dart';
 import 'package:audivive/pages/game_auditorymemory.dart';
 import 'package:audivive/pages/game_reaction.dart';
 
@@ -29,6 +31,73 @@ class GameZonePage extends StatelessWidget {
     {"name": "Sound Adventure", "color": Colors.indigo, "icon": Icons.explore},
   ];
 
+  void _navigateToGame(BuildContext context, String gameName) {
+    switch (gameName) {
+      case "Reaction Time Game":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ReactionTimeGamePage()),
+        );
+        break;
+      case "Auditory Memory Games":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TextToSpeechPage()),
+        );
+        break;
+      case "Speech in Noise":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MotivationalGame()),
+        );
+        break;
+      case "Rhythm Training":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RhythmTrainingPage()),
+        );
+        break;
+      case "Sound Match Image":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  SoundGame()), // Navigate to Sound Match Image game
+        );
+        break;
+      case "Pitch and Tone":
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => PitchAndToneGamePage()),
+        // );
+        break;
+      case "Sound Discrimination":
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => SoundDiscriminationGamePage()),
+        // );
+        break;
+      case "Find Odd Sound":
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => FindOddSoundGamePage()),
+        // );
+        break;
+      case "Sound Adventure":
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => SoundAdventureGamePage()),
+        // );
+        break;
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$gameName is under development!')),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,42 +116,7 @@ class GameZonePage extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              // Navigation logic based on the game name
-              switch (games[index]["name"]) {
-                case "Reaction Time Game":
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReactionTimeGamePage(),
-                    ),
-                  );
-                  break;
-                case "Auditory Memory Games":
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TextToSpeechPage(),
-                    ),
-                  );
-                  break;
-                case "Speech in Noise":
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MotivationalGame(),
-                    ),
-                  );
-                  break;
-                // Add cases for other games here
-                default:
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content:
-                          Text('${games[index]["name"]} is under development!'),
-                    ),
-                  );
-                  break;
-              }
+              _navigateToGame(context, games[index]["name"]);
             },
             child: Container(
               decoration: BoxDecoration(

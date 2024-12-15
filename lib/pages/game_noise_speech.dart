@@ -11,65 +11,92 @@ class MotivationalGame extends StatefulWidget {
 class _MotivationalGameState extends State<MotivationalGame> {
   final FlutterTts _tts = FlutterTts();
   final AudioPlayer _backgroundPlayer = AudioPlayer();
-  bool _isGameStarted = false; // To track if the game has started
-  int _currentPhaseIndex = 0;
-  bool _isPlayingTrafficNoise = false;
+  bool _isGameStarted = false;
   bool _isGameOver = false;
+  bool _isTrafficNoisePlaying = false;
+  String _wordToGuess = ''; // Store the word to be guessed
 
-  final List<Map<String, dynamic>> _phases = [
-    {
-      "text":
-          "Success is not the key to happiness. Happiness is the key to ___.",
-      "answer": "Success",
-      "options": ["Success", "Freedom", "Life", "Wealth"]
-    },
-    {
-      "text": "Don't watch the clock; do what it ___.",
-      "answer": "Does",
-      "options": ["Wants", "Ticks", "Does", "Says"]
-    },
-    {
-      "text": "The only way to do great work is to ___ what you do.",
-      "answer": "Love",
-      "options": ["Love", "Know", "Understand", "Practice"]
-    },
-    {
-      "text": "Believe you can, and you're ___ there.",
-      "answer": "Almost",
-      "options": ["Almost", "Always", "Not", "Already"]
-    },
+  // List of random words
+  final List<String> _words = [
+    'Success',
+    'Failure',
+    'Love',
+    'Peace',
+    'Growth',
+    'Hope'
   ];
 
+  // Play the crowd noise and trigger word events
   Future<void> _playTrafficNoise() async {
-    setState(() => _isPlayingTrafficNoise = true);
-    await _backgroundPlayer.setSource(AssetSource('assets/sounds/crowd.mp3'));
-    await _backgroundPlayer.setVolume(0.3); // Set traffic sound volume
-    await _backgroundPlayer.setReleaseMode(ReleaseMode.loop); // Loop the audio
+    setState(() {
+      _isTrafficNoisePlaying = true;
+    });
+
+    // Start playing crowd noise
+    await _backgroundPlayer.setSource(AssetSource('sound/crowd.mp3'));
+    await _backgroundPlayer.setVolume(0.3);
+    await _backgroundPlayer
+        .setReleaseMode(ReleaseMode.loop); // Loop the crowd noise
     await _backgroundPlayer.resume();
 
-    // Wait until the traffic noise finishes
-    await Future.delayed(const Duration(
-        seconds: 10)); // Adjust duration as per your audio length
-    if (!_isGameOver) {
-      _showQuestion();
-    }
+    // Wait a random time and then speak a random word
+    await _triggerWordDuringNoise();
   }
 
-  Future<void> _speakPhase(String text) async {
-    await _tts.setSpeechRate(0.5); // Adjust speed
-    await _tts.setVolume(1.0); // Speech volume
-    await _tts.speak(text);
+  // Trigger the word to be spoken at a random interval
+  Future<void> _triggerWordDuringNoise() async {
+    final random = Random();
+    _wordToGuess = _words[random.nextInt(_words.length)];
+
+    // Randomly delay the word speaking
+    int wordDelay = random.nextInt(5) + 1; // Random delay between 1-5 seconds
+
+    // Wait for the delay and speak the word
+    await Future.delayed(Duration(seconds: wordDelay));
+    await _tts.speak(_wordToGuess);
+
+    // Wait until the crowd sound ends before showing the guess dialog
+    await _backgroundPlayer.onPlayerComplete;
+    _showGuessDialog();
   }
 
-  void _checkAnswer(String selectedOption) {
-    final correctAnswer = _phases[_currentPhaseIndex]["answer"];
-    if (selectedOption == correctAnswer) {
-      _showResult("Winner! Correct Answer.");
+  // Show a dialog to ask the user to guess the word
+  void _showGuessDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Guess the Word!"),
+        content: Text("What was the word spoken?"),
+        actions: [
+          TextField(
+            onSubmitted: (guess) {
+              _checkAnswer(guess);
+              Navigator.of(context).pop();
+            },
+            decoration: InputDecoration(hintText: "Enter your guess here"),
+          ),
+          TextButton(
+            onPressed: () {
+              // Handle submit button
+              _checkAnswer("Some guess");
+            },
+            child: const Text("Submit"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Check the user's answer
+  void _checkAnswer(String guess) {
+    if (guess.toLowerCase() == _wordToGuess.toLowerCase()) {
+      _showResult("Correct! The word was '$_wordToGuess'.");
     } else {
-      _showResult("Loser! Incorrect Answer.");
+      _showResult("Incorrect. The word was '$_wordToGuess'.");
     }
   }
 
+  // Show the result of the guess
   void _showResult(String message) {
     showDialog(
       context: context,
@@ -80,13 +107,9 @@ class _MotivationalGameState extends State<MotivationalGame> {
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {
-                if (_currentPhaseIndex < _phases.length - 1) {
-                  _currentPhaseIndex++;
-                } else {
-                  _currentPhaseIndex = 0; // Restart game
-                }
+                _isGameOver = false;
               });
-              _playTrafficNoise(); // Play traffic noise before the next phase
+              _playTrafficNoise(); // Restart with crowd noise
             },
             child: const Text("Next"),
           ),
@@ -95,50 +118,13 @@ class _MotivationalGameState extends State<MotivationalGame> {
     );
   }
 
-  void _startPhase() {
-    final phaseText = _phases[_currentPhaseIndex]["text"];
-    _speakPhase(phaseText);
-  }
-
-  // Randomly speak phrases
-  void _randomSpeak() {
-    final random = Random();
-    if (_isGameStarted && !_isGameOver) {
-      Future.delayed(Duration(seconds: random.nextInt(5) + 5), () {
-        if (!_isGameOver) {
-          final randomPhrase = _phases[random.nextInt(_phases.length)]["text"];
-          _speakPhase(randomPhrase);
-        }
-      });
-    }
-  }
-
-  // Show fill-in-the-blank question
-  void _showQuestion() {
+  // Start the game
+  void _startGame() {
     setState(() {
-      _isGameOver = true;
+      _isGameStarted = true;
+      _isGameOver = false;
     });
-    final currentPhase = _phases[_currentPhaseIndex];
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(currentPhase["text"]),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: currentPhase["options"].map<Widget>((option) {
-            return ElevatedButton(
-              onPressed: () => _checkAnswer(option),
-              child: Text(option),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
+    _playTrafficNoise();
   }
 
   @override
@@ -151,38 +137,30 @@ class _MotivationalGameState extends State<MotivationalGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Motivational Fill-in-the-Blanks")),
-      body: _isGameStarted
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Listen to the motivational thought and fill in the blank:",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                if (!_isGameOver)
-                  ElevatedButton(
-                    onPressed: _randomSpeak,
-                    child: const Text("Listen Random Phrase"),
-                  ),
-              ],
-            )
-          : Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _isGameStarted = true;
-                  });
-                  _playTrafficNoise(); // Start the game with traffic noise
-                },
+      appBar: AppBar(title: const Text("Motivational Guessing Game")),
+      body: Center(
+        child: _isGameStarted
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_isTrafficNoisePlaying)
+                    ElevatedButton(
+                      onPressed: _playTrafficNoise,
+                      child: const Text("Play Traffic Noise"),
+                    ),
+                  const SizedBox(height: 20),
+                  if (!_isGameOver)
+                    ElevatedButton(
+                      onPressed: _triggerWordDuringNoise,
+                      child: const Text("Listen for Word"),
+                    ),
+                ],
+              )
+            : ElevatedButton(
+                onPressed: _startGame,
                 child: const Text("Start Game"),
               ),
-            ),
+      ),
     );
   }
 }
