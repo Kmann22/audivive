@@ -1,5 +1,6 @@
-import 'package:audivive/pages/game_sound_identify.dart';
+import 'package:audivive/pages/game_3d.dart';
 import 'package:flutter/material.dart';
+import 'package:audivive/pages/game_sound_identify.dart';
 import 'package:audivive/pages/game_rhythm.dart';
 import 'package:audivive/pages/game_noise_speech.dart';
 import 'package:audivive/pages/game_auditorymemory.dart';
@@ -33,17 +34,23 @@ class GameZonePage extends StatelessWidget {
 
   void _navigateToGame(BuildContext context, String gameName) {
     switch (gameName) {
-      case "Reaction Time Game":
+      case "3D Sounds":
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ReactionTimeGamePage()),
+          MaterialPageRoute(builder: (context) => AudioTestScreen()),
         );
         break;
-      case "Auditory Memory Games":
+      case "Sound Match Image":
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TextToSpeechPage()),
+          MaterialPageRoute(builder: (context) => SoundGame()),
         );
+        break;
+      case "Pitch and Tone":
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => PitchAndToneGamePage()),
+        // );
         break;
       case "Speech in Noise":
         Navigator.push(
@@ -57,20 +64,6 @@ class GameZonePage extends StatelessWidget {
           MaterialPageRoute(builder: (context) => RhythmTrainingPage()),
         );
         break;
-      case "Sound Match Image":
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  SoundGame()), // Navigate to Sound Match Image game
-        );
-        break;
-      case "Pitch and Tone":
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => PitchAndToneGamePage()),
-        // );
-        break;
       case "Sound Discrimination":
         // Navigator.push(
         //   context,
@@ -78,11 +71,23 @@ class GameZonePage extends StatelessWidget {
         //       builder: (context) => SoundDiscriminationGamePage()),
         // );
         break;
+      case "Auditory Memory Games":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TextToSpeechPage()),
+        );
+        break;
       case "Find Odd Sound":
         // Navigator.push(
         //   context,
         //   MaterialPageRoute(builder: (context) => FindOddSoundGamePage()),
         // );
+        break;
+      case "Reaction Time Game":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ReactionTimeGamePage()),
+        );
         break;
       case "Sound Adventure":
         // Navigator.push(
@@ -105,13 +110,8 @@ class GameZonePage extends StatelessWidget {
         title: const Text('Game Zone'),
         backgroundColor: Colors.blueAccent,
       ),
-      body: GridView.builder(
+      body: ListView.builder(
         padding: const EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3, // 3 columns
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
         itemCount: games.length,
         itemBuilder: (context, index) {
           return GestureDetector(
@@ -119,34 +119,38 @@ class GameZonePage extends StatelessWidget {
               _navigateToGame(context, games[index]["name"]);
             },
             child: Container(
+              margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                 color: games[index]["color"],
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
-                    blurRadius: 5,
-                    offset: const Offset(2, 2),
+                    blurRadius: 8,
+                    offset: const Offset(3, 3),
                   ),
                 ],
               ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Row(
                   children: [
                     Icon(
                       games[index]["icon"],
-                      size: 40,
+                      size: 50,
                       color: Colors.white,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      games[index]["name"],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Text(
+                        games[index]["name"],
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],

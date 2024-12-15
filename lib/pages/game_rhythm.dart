@@ -15,7 +15,7 @@ class _RhythmTrainingPageState extends State<RhythmTrainingPage> {
   Timer? _timer;
   bool _isActive = false;
 
-  String metronomeSound = 'assets/metronome.mp3';
+  String metronomeSound = 'sound/metronome.mp3';
 
   int _interval(int bpm) => (60000 / bpm).toInt();
 

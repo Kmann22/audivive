@@ -1,3 +1,4 @@
+import 'package:audivive/pages/game_zone.dart';
 import 'package:audivive/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Navigate to HomePage after 3 seconds
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => GameZonePage()),
       );
     });
   }
