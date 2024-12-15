@@ -89,16 +89,46 @@ class _ReactionTimeGamePageState extends State<ReactionTimeGamePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.white,
           title: const Text(
             "Game Info",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           content: const Text(
             "This game helps improve your auditory reaction time. "
             "Listen to the crowd noise and stop as soon as you hear the bell. "
             "Your reaction time will be displayed. Practice to improve your focus and reflexes!",
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: Colors.black87),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                "Close",
+                style: TextStyle(color: Colors.blueAccent),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showWhyThisIsUsefulDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text(
+            "Why This is Useful",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "This game helps improve your auditory reaction time, "
+            "which is crucial for quick decision-making and reflexes in everyday situations. "
+            "Improving your reaction time can help with driving, gaming, and sports performance.",
+            style: TextStyle(color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -117,14 +147,18 @@ class _ReactionTimeGamePageState extends State<ReactionTimeGamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
         title: const Text("Reaction Time Game"),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.blueGrey,
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: showInfoDialog,
+          ),
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: showWhyThisIsUsefulDialog,
           ),
         ],
       ),
@@ -157,7 +191,7 @@ class _ReactionTimeGamePageState extends State<ReactionTimeGamePage> {
               const Text(
                 "Play the crowd audio and find the bell ring in it.",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(color: Colors.black87, fontSize: 16),
               ),
             if (isPlaying)
               const Text(
@@ -171,7 +205,7 @@ class _ReactionTimeGamePageState extends State<ReactionTimeGamePage> {
             const SizedBox(height: 30),
             if (_reactionTime != null)
               Card(
-                color: Colors.blueGrey.shade900,
+                color: Colors.blueGrey.shade100,
                 elevation: 8,
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 child: Padding(
@@ -180,7 +214,7 @@ class _ReactionTimeGamePageState extends State<ReactionTimeGamePage> {
                     "Your reaction time: ${_reactionTime!.toStringAsFixed(2)} seconds",
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black87,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),

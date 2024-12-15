@@ -31,6 +31,13 @@ class _SoundGameState extends State<SoundGame> {
     });
   }
 
+  void _stopSound() {
+    _audioPlayer.stop();
+    setState(() {
+      soundPlayed = false; // Reset soundPlayed after stopping the audio
+    });
+  }
+
   void _checkAnswer(String answer) {
     if (answer == currentSound.split('.')[0]) {
       setState(() {
@@ -49,8 +56,38 @@ class _SoundGameState extends State<SoundGame> {
     setState(() {
       currentSound = sound['sound']!;
       currentScrambled = sound['scrambled']!;
-      soundPlayed = false; // Reset sound played state
+      soundPlayed = false; // Reset soundPlayed state for the next round
+      _controller.clear(); // Clear the text field after each round
     });
+  }
+
+  void _showGameInfo() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("How to Play"),
+          content: Text(
+            "In this game, you will hear a sound. Your task is to guess which sound it is based on the scrambled word that represents it. "
+            "Type your guess and press 'Submit Guess'. You score a point for each correct guess!",
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.stop(); // Stop any sound when leaving the game screen
+    super.dispose();
   }
 
   @override
@@ -62,7 +99,19 @@ class _SoundGameState extends State<SoundGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Guess the Sound")),
+      appBar: AppBar(
+        title: Text("Guess the Sound"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info),
+            onPressed: _showGameInfo, // Show game instructions
+          ),
+          IconButton(
+            icon: Icon(Icons.stop),
+            onPressed: _stopSound, // Stop audio
+          ),
+        ],
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(

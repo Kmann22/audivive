@@ -54,7 +54,8 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
       "zebra"
     ];
     _words = wordPool.toList()..shuffle();
-    _spokenWords = _words.take(10).toList();
+    _spokenWords = _words.take(5).toList(); // Limit to 5 words
+    _spokenWords.shuffle(); // Shuffle the order for the game
   }
 
   Future<void> _speakWords() async {
@@ -110,6 +111,52 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
     });
   }
 
+  void _showHowToPlay() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("How to Play"),
+        content: const Text(
+          "1. Press 'Start Game' to hear the words.\n"
+          "2. Listen carefully and tap the words in the order they were spoken.\n"
+          "3. Once you tap all the words, check if the order is correct.\n"
+          "4. If correct, you win! If not, try again.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Close"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHowItHelps() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("How It Helps to Aid Hearing"),
+        content: const Text(
+          "This game helps improve auditory memory and listening skills by\n"
+          "training the brain to recall spoken words in a specific order. It enhances\n"
+          "concentration, improves word recognition, and strengthens cognitive\n"
+          "abilities associated with auditory processing, making it beneficial for all ages.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Close"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _flutterTts.stop();
@@ -119,35 +166,64 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Auditory Memory Game")),
+      appBar: AppBar(
+        title: const Text("Auditory Memory Game"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info),
+            onPressed: _showHowToPlay,
+          ),
+          IconButton(
+            icon: const Icon(Icons.hearing),
+            onPressed: _showHowItHelps,
+          ),
+        ],
+      ),
       body: Center(
         child: _isGameStarted
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Tap the words in the order they were spoken:",
+                    "Tap the words in the correct order:",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: (_spokenWords.take(4).toList()..shuffle())
-                        .map(
-                          (word) => ElevatedButton(
-                            onPressed: () => _handleWordTap(word),
-                            child: Text(word),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  // Displaying buttons with shuffled words
+                  ..._spokenWords.map((word) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: ElevatedButton(
+                        onPressed: () => _handleWordTap(word),
+                        child: Text(
+                          word,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 50),
+                          textStyle: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  const SizedBox(height: 20),
                 ],
               )
-            : ElevatedButton(
-                onPressed: _speakWords,
-                child: const Text("Start Game"),
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _speakWords,
+                    child: const Text(
+                      "Start Game",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(200, 50),
+                    ),
+                  ),
+                ],
               ),
       ),
     );

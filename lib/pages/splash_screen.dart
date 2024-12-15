@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 10),
             // Tagline
             Text(
-              'Train your ears, play your way!',
+              'Rediscover Sound, Redefine You!',
               style: TextStyle(
                 fontSize: 16,
                 fontStyle: FontStyle.italic,

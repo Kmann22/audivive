@@ -1,5 +1,5 @@
-import 'package:audivive/pages/game_3d.dart';
 import 'package:flutter/material.dart';
+import 'package:audivive/pages/game_3d.dart';
 import 'package:audivive/pages/game_sound_identify.dart';
 import 'package:audivive/pages/game_rhythm.dart';
 import 'package:audivive/pages/game_noise_speech.dart';
@@ -8,49 +8,41 @@ import 'package:audivive/pages/game_reaction.dart';
 
 class GameZonePage extends StatelessWidget {
   final List<Map<String, dynamic>> games = [
-    {"name": "3D Sounds", "color": Colors.blue, "icon": Icons.headset},
-    {"name": "Sound Match Image", "color": Colors.orange, "icon": Icons.image},
-    {"name": "Pitch and Tone", "color": Colors.green, "icon": Icons.volume_up},
-    {"name": "Speech in Noise", "color": Colors.red, "icon": Icons.audiotrack},
+    {"name": "Sound Guess", "color": Colors.orange, "icon": Icons.headphones},
+    {
+      "name": "Speech in Noise",
+      "color": Colors.red,
+      "icon": Icons.volume_up, // Changed to 'volume_up' for uniqueness
+    },
     {
       "name": "Rhythm Training",
       "color": Colors.purple,
-      "icon": Icons.music_note
+      "icon": Icons.album, // Changed to 'album' for uniqueness
     },
     {
-      "name": "Sound Discrimination",
-      "color": Colors.teal,
-      "icon": Icons.compare
+      "name": "Reaction Time Game",
+      "color": Colors.pink,
+      "icon": Icons.access_alarm, // Retained 'access_alarm' as it fits well
     },
     {
       "name": "Auditory Memory Games",
-      "color": Colors.yellow,
-      "icon": Icons.memory
+      "color": Colors.green,
+      "icon": Icons.memory, // Retained 'memory' as it fits well
     },
-    {"name": "Find Odd Sound", "color": Colors.cyan, "icon": Icons.hearing},
-    {"name": "Reaction Time Game", "color": Colors.pink, "icon": Icons.timer},
-    {"name": "Sound Adventure", "color": Colors.indigo, "icon": Icons.explore},
+    {
+      "name": "3D Sounds",
+      "color": Colors.blue,
+      "icon": Icons.headset, // Changed to 'headset' for uniqueness
+    },
   ];
 
   void _navigateToGame(BuildContext context, String gameName) {
     switch (gameName) {
-      case "3D Sounds":
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AudioTestScreen()),
-        );
-        break;
-      case "Sound Match Image":
+      case "Sound Guess":
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => SoundGame()),
         );
-        break;
-      case "Pitch and Tone":
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => PitchAndToneGamePage()),
-        // );
         break;
       case "Speech in Noise":
         Navigator.push(
@@ -64,12 +56,11 @@ class GameZonePage extends StatelessWidget {
           MaterialPageRoute(builder: (context) => RhythmTrainingPage()),
         );
         break;
-      case "Sound Discrimination":
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => SoundDiscriminationGamePage()),
-        // );
+      case "Reaction Time Game":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ReactionTimeGamePage()),
+        );
         break;
       case "Auditory Memory Games":
         Navigator.push(
@@ -77,23 +68,11 @@ class GameZonePage extends StatelessWidget {
           MaterialPageRoute(builder: (context) => TextToSpeechPage()),
         );
         break;
-      case "Find Odd Sound":
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => FindOddSoundGamePage()),
-        // );
-        break;
-      case "Reaction Time Game":
+      case "3D Sounds":
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ReactionTimeGamePage()),
+          MaterialPageRoute(builder: (context) => AudioTestScreen()),
         );
-        break;
-      case "Sound Adventure":
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => SoundAdventureGamePage()),
-        // );
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(
@@ -106,59 +85,79 @@ class GameZonePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Game Zone'),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: games.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              _navigateToGame(context, games[index]["name"]);
-            },
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: games[index]["color"],
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                    offset: const Offset(3, 3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                child: Row(
-                  children: [
-                    Icon(
-                      games[index]["icon"],
-                      size: 50,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Text(
-                        games[index]["name"],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+      appBar: null, // Removed app bar
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.start, // Center content vertically
+          children: [
+            SizedBox(height: 100),
+            // Centered "Game Zone" text
+            Text(
+              'Game Zone',
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
               ),
             ),
-          );
-        },
+            // List of games
+            Expanded(
+              child: ListView.builder(
+                itemCount: games.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      _navigateToGame(context, games[index]["name"]);
+                    },
+                    child: Card(
+                      elevation:
+                          10, // Increased elevation for better shadow effect
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(15), // Rounded corners
+                      ),
+                      margin: const EdgeInsets.only(bottom: 20),
+                      color: games[index]["color"],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 12.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30,
+                              child: Icon(
+                                games[index]["icon"],
+                                size: 35,
+                                color: games[index]["color"],
+                              ),
+                            ),
+                            const SizedBox(
+                                width:
+                                    20), // Increased space between icon and text
+                            Expanded(
+                              child: Text(
+                                games[index]["name"],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
